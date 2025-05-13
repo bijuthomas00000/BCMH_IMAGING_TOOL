@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Annotation Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="file-input-container">
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                <button id="loadImage" class="action-btn" title="Load New Image">
+                    <i class="fas fa-folder-open"></i> Load New Image
+                </button>
+            </div>
+            <div class="tool-group">
+                <button id="brush" class="tool-btn active" title="Brush">
+                    <i class="fas fa-paint-brush"></i>
+                </button>
+                <button id="rectangle" class="tool-btn" title="Rectangle">
+                    <i class="fas fa-square"></i>
+                </button>
+                <button id="circle" class="tool-btn" title="Circle">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button id="line" class="tool-btn" title="Line">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button id="text" class="tool-btn" title="Text">
+                    <i class="fas fa-font"></i>
+                </button>
+            </div>
+            <div class="tool-options">
+                <input type="color" id="colorPicker" value="#000000">
+                <input type="range" id="brushSize" min="1" max="50" value="5">
+                <select id="fontSize">
+                    <option value="12">12px</option>
+                    <option value="16">16px</option>
+                    <option value="20">20px</option>
+                    <option value="24">24px</option>
+                    <option value="32">32px</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button id="undo" class="action-btn" title="Undo">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button id="download" class="action-btn" title="Download">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/tools.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 

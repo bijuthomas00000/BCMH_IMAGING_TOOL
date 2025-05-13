@@ -1,0 +1,155 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 95%;
+    max-width: 1200px;
+}
+
+.toolbar {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.file-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#loadImage {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+#loadImage:hover {
+    background-color: #218838;
+}
+
+.image-selector {
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    min-width: 200px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.image-selector:hover {
+    border-color: #adb5bd;
+}
+
+.tool-group {
+    display: flex;
+    gap: 10px;
+}
+
+.tool-btn, .action-btn {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover, .action-btn:hover {
+    background-color: #e9ecef;
+}
+
+.tool-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+.tool-options {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+#colorPicker {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#brushSize {
+    width: 100px;
+}
+
+#fontSize {
+    padding: 5px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.canvas-container {
+    width: 100%;
+    height: 600px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+@media (max-width: 768px) {
+    .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .tool-options {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .canvas-container {
+        height: 400px;
+    }
+
+    .file-input-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .image-selector {
+        width: 100%;
+    }
+} 
