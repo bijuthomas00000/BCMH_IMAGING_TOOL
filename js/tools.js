@@ -143,9 +143,7 @@ class TextTool extends DrawingTool {
     startDrawing(e) {
         super.startDrawing(e);
         this.savedImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        this.text = prompt('Enter text:');
-        if (!this.text) {
-            this.isDrawing = false;
-        }
+        this.text = '';
+        this.isDrawing = false;
     }
 } 

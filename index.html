@@ -12,11 +12,14 @@
         <div class="toolbar">
             <div class="file-input-container">
                 <input type="file" id="imageInput" accept="image/*" style="display: none;">
-                <button id="loadImage" class="action-btn" title="Load New Image">
-                    <i class="fas fa-folder-open"></i> Load New Image
+                <button id="loadImage" class="action-btn" title="Upload">
+                    <i class="fas fa-upload"></i> Upload
                 </button>
             </div>
             <div class="tool-group">
+                <button id="pointer" class="tool-btn" title="Pointer">
+                    <i class="fas fa-mouse-pointer"></i>
+                </button>
                 <button id="brush" class="tool-btn active" title="Brush">
                     <i class="fas fa-paint-brush"></i>
                 </button>
@@ -31,6 +34,12 @@
                 </button>
                 <button id="text" class="tool-btn" title="Text">
                     <i class="fas fa-font"></i>
+                </button>
+                <button id="zoomIn" class="tool-btn" title="Zoom In">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button id="zoomOut" class="tool-btn" title="Zoom Out">
+                    <i class="fas fa-search-minus"></i>
                 </button>
             </div>
             <div class="tool-options">
@@ -50,6 +59,9 @@
                 </button>
                 <button id="download" class="action-btn" title="Download">
                     <i class="fas fa-download"></i>
+                </button>
+                <button id="downloadBase64" class="action-btn" title="Download Base64">
+                    <i class="fas fa-code"></i>
                 </button>
             </div>
         </div>

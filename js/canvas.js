@@ -53,7 +53,7 @@ class CanvasManager {
     }
 
     setTool(toolName) {
-        this.currentTool = this.tools[toolName];
+        this.currentTool = this.tools[toolName] || null;
     }
 
     setColor(color) {
