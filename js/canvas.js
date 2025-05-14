@@ -9,6 +9,7 @@ class CanvasManager {
             rectangle: new RectangleTool(canvas, this.ctx),
             circle: new CircleTool(canvas, this.ctx),
             line: new LineTool(canvas, this.ctx),
+            dashedLine: new DashedLineTool(canvas, this.ctx),
             text: new TextTool(canvas, this.ctx)
         };
         

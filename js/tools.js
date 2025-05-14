@@ -118,6 +118,44 @@ class LineTool extends DrawingTool {
     }
 }
 
+class DashedLineTool extends DrawingTool {
+    constructor(canvas, ctx) {
+        super(canvas, ctx);
+        this.dashLength = 10;
+        this.gapLength = 5;
+    }
+
+    draw(e) {
+        if (!this.isDrawing) return;
+        
+        const pos = Utils.getMousePos(this.canvas, e);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.putImageData(this.savedImageData, 0, 0);
+        
+        // Set up the line style
+        this.ctx.strokeStyle = this.color;
+        this.ctx.lineWidth = this.size;
+        this.ctx.lineCap = 'round';
+        
+        // Set the dash pattern
+        this.ctx.setLineDash([this.dashLength, this.gapLength]);
+        
+        // Draw the dashed line
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.startX, this.startY);
+        this.ctx.lineTo(pos.x, pos.y);
+        this.ctx.stroke();
+        
+        // Reset line dash to prevent affecting other tools
+        this.ctx.setLineDash([]);
+    }
+
+    startDrawing(e) {
+        super.startDrawing(e);
+        this.savedImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
 class TextTool extends DrawingTool {
     constructor(canvas, ctx) {
         super(canvas, ctx);
