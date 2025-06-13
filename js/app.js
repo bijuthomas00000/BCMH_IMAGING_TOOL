@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('canvas');
     const canvasManager = new CanvasManager(canvas);
 
+    // Create a separate canvas for edits
+    const editCanvas = document.createElement('canvas');
+    editCanvas.width = canvas.width;
+    editCanvas.height = canvas.height;
+    const editCtx = editCanvas.getContext('2d');
+
     // Tool selection
     const toolButtons = document.querySelectorAll('.tool-btn');
     function selectTool(toolId) {
@@ -59,14 +65,104 @@ document.addEventListener('DOMContentLoaded', () => {
     downloadBase64Button.addEventListener('click', () => {
         // Get base64 string
         const base64 = canvas.toDataURL('image/png');
-        // Create a blob and download as .txt
-        const blob = new Blob([base64], { type: 'text/plain' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'canvas-base64.txt';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        
+        // Create dialog container
+        const dialog = document.createElement('div');
+        dialog.style.position = 'fixed';
+        dialog.style.top = '50%';
+        dialog.style.left = '50%';
+        dialog.style.transform = 'translate(-50%, -50%)';
+        dialog.style.backgroundColor = 'white';
+        dialog.style.padding = '20px';
+        dialog.style.borderRadius = '8px';
+        dialog.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        dialog.style.zIndex = '1000';
+        dialog.style.maxWidth = '80%';
+        dialog.style.maxHeight = '80vh';
+        dialog.style.display = 'flex';
+        dialog.style.flexDirection = 'column';
+        dialog.style.gap = '10px';
+
+        // Create textarea for base64
+        const textarea = document.createElement('textarea');
+        textarea.value = base64;
+        textarea.style.width = '100%';
+        textarea.style.height = '200px';
+        textarea.style.padding = '10px';
+        textarea.style.border = '1px solid #ccc';
+        textarea.style.borderRadius = '4px';
+        textarea.style.resize = 'vertical';
+        textarea.style.fontFamily = 'monospace';
+        textarea.style.fontSize = '12px';
+        textarea.readOnly = true;
+
+        // Create button container
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.gap = '10px';
+        buttonContainer.style.justifyContent = 'flex-end';
+
+        // Create copy button
+        const copyButton = document.createElement('button');
+        copyButton.textContent = 'Copy to Clipboard';
+        copyButton.style.padding = '8px 16px';
+        copyButton.style.backgroundColor = '#4CAF50';
+        copyButton.style.color = 'white';
+        copyButton.style.border = 'none';
+        copyButton.style.borderRadius = '4px';
+        copyButton.style.cursor = 'pointer';
+        copyButton.onclick = () => {
+            textarea.select();
+            document.execCommand('copy');
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+                copyButton.textContent = 'Copy to Clipboard';
+            }, 2000);
+        };
+
+        // Create close button
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.style.padding = '8px 16px';
+        closeButton.style.backgroundColor = '#f44336';
+        closeButton.style.color = 'white';
+        closeButton.style.border = 'none';
+        closeButton.style.borderRadius = '4px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.onclick = () => {
+            document.body.removeChild(dialog);
+        };
+
+        // Create title
+        const title = document.createElement('h3');
+        title.textContent = 'Base64 Image Data';
+        title.style.margin = '0 0 10px 0';
+        title.style.color = '#333';
+
+        // Add elements to dialog
+        buttonContainer.appendChild(copyButton);
+        buttonContainer.appendChild(closeButton);
+        dialog.appendChild(title);
+        dialog.appendChild(textarea);
+        dialog.appendChild(buttonContainer);
+
+        // Add overlay
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        overlay.style.zIndex = '999';
+        overlay.onclick = () => {
+            document.body.removeChild(overlay);
+            document.body.removeChild(dialog);
+        };
+
+        // Add to document
+        document.body.appendChild(overlay);
+        document.body.appendChild(dialog);
     });
 
     // Set default tool to pointer
@@ -107,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Clear canvas and draw image
                     canvasManager.ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    editCtx.clearRect(0, 0, editCanvas.width, editCanvas.height);
                     canvasManager.ctx.drawImage(img, 0, 0, width, height);
                     canvasManager.saveState();
                     // Store the original image and its size
@@ -254,14 +351,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const zoomOutBtn = document.getElementById('zoomOut');
 
     function applyZoom() {
-        // Clear and scale
-        canvasManager.ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset
+        // Clear main canvas
+        canvasManager.ctx.setTransform(1, 0, 0, 1, 0, 0);
         canvasManager.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         // Calculate offset to center the image
         zoomOffsetX = (canvas.width - (canvasManager.originalImageWidth || canvas.width) * zoomLevel) / 2;
         zoomOffsetY = (canvas.height - (canvasManager.originalImageHeight || canvas.height) * zoomLevel) / 2;
+        
+        // Apply zoom transformation
         canvasManager.ctx.setTransform(zoomLevel, 0, 0, zoomLevel, zoomOffsetX, zoomOffsetY);
-        // Redraw the original image at new scale
+        
+        // Draw original image
         if (canvasManager.originalImage) {
             canvasManager.ctx.drawImage(
                 canvasManager.originalImage,
@@ -270,7 +371,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 canvasManager.originalImageHeight
             );
         }
+        
+        // Draw edits on top
+        canvasManager.ctx.drawImage(editCanvas, 0, 0);
     }
+
+    // Modify the tools to draw on editCanvas instead of main canvas
+    Object.values(canvasManager.tools).forEach(tool => {
+        const originalDraw = tool.draw;
+        tool.draw = function(e) {
+            if (!this.isDrawing) return;
+            
+            const pos = Utils.getMousePos(canvas, e);
+            editCtx.clearRect(0, 0, editCanvas.width, editCanvas.height);
+            if (this.savedImageData) {
+                editCtx.putImageData(this.savedImageData, 0, 0);
+            }
+            
+            // Call the original draw method but with editCtx
+            const originalCtx = this.ctx;
+            this.ctx = editCtx;
+            originalDraw.call(this, e);
+            this.ctx = originalCtx;
+            
+            // Update main canvas
+            applyZoom();
+        };
+        
+        const originalStartDrawing = tool.startDrawing;
+        tool.startDrawing = function(e) {
+            originalStartDrawing.call(this, e);
+            this.savedImageData = editCtx.getImageData(0, 0, editCanvas.width, editCanvas.height);
+        };
+    });
+
+    // Add mouse wheel zoom handler
+    canvas.addEventListener('wheel', (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+            const newZoomLevel = Math.min(Math.max(zoomLevel + delta, MIN_ZOOM), MAX_ZOOM);
+            
+            if (newZoomLevel !== zoomLevel) {
+                zoomLevel = newZoomLevel;
+                applyZoom();
+            }
+        }
+    }, { passive: false });
 
     zoomInBtn.addEventListener('click', () => {
         if (zoomLevel < MAX_ZOOM) {
@@ -278,6 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
             applyZoom();
         }
     });
+
     zoomOutBtn.addEventListener('click', () => {
         if (zoomLevel > MIN_ZOOM) {
             zoomLevel -= ZOOM_STEP;
