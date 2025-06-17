@@ -46,11 +46,47 @@ class CanvasManager {
     }
 
     resizeCanvas() {
+        // Store current canvas content
+        const currentContent = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Resize canvas
         const container = this.canvas.parentElement;
         this.canvas.width = container.clientWidth;
         this.canvas.height = container.clientHeight;
+        
+        // Clear canvas with white background
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // If we have an original image, redraw it
+        if (this.originalImage) {
+            // Calculate dimensions to maintain aspect ratio
+            const maxWidth = this.canvas.width;
+            const maxHeight = this.canvas.height;
+            let width = this.originalImage.width;
+            let height = this.originalImage.height;
+
+            if (width > maxWidth) {
+                height = (maxWidth * height) / width;
+                width = maxWidth;
+            }
+            if (height > maxHeight) {
+                width = (maxHeight * width) / height;
+                height = maxHeight;
+            }
+
+            // Update stored dimensions
+            this.originalImageWidth = width;
+            this.originalImageHeight = height;
+
+            // Draw the original image
+            this.ctx.drawImage(this.originalImage, 0, 0, width, height);
+        }
+        
+        // Restore any edits from the current content
+        if (currentContent) {
+            this.ctx.putImageData(currentContent, 0, 0);
+        }
     }
 
     setTool(toolName) {
